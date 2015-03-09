@@ -2,8 +2,10 @@ import sys
 import PyQt4
 from PyQt4 import QtCore, QtGui
 
+
 class InputDialog(QtGui.QDialog):
     #create database connection 
+    #
     def __init__(self):
         super(InputDialog,self).__init__()
         self.initUI()
@@ -55,8 +57,10 @@ class InputDialog(QtGui.QDialog):
     
     
     def getInput(self):
-        
-        return [str(self.dbtext.text()),str(self.usertext.text())]
+        if(self.dbtext.text()!="" and self.usertext.text()!=""):
+            return [str(self.dbtext.text()),str(self.usertext.text())]
+        else:
+            return None
 
 
 

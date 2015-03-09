@@ -291,14 +291,14 @@ class Example(QtGui.QMainWindow):
         cbDiag=InputDialog()
         cbDiag.exec_()
         result=cbDiag.getInput()
-        self.connection=result
-        
-        self.buildConnect()
+        if(result!=None):
+            self.connection=result
+            self.buildConnect()
+        #
     
     def buildConnect(self):
         
         constr=self.conToString()
-        
         self.conn=psycopg2.connect(constr)
         self.cur=self.conn.cursor()
         

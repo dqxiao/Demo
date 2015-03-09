@@ -1,3 +1,4 @@
+#standard propagation result parser 
 class Annotation:
     
     def __init__(self,inputStr):
