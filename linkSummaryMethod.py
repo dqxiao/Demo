@@ -45,11 +45,6 @@ class simple_model(QtCore.QAbstractListModel):
     def __init__(self, parent=None):
         super(simple_model, self).__init__(parent)
         self.list = []
-        # for name, dob, house_no in (
- #        ("Neil", datetime.date(1969,12,9), 23),
- #        ("John", datetime.date(1952,5,3), 2543),
- #        ("Ilona", datetime.date(1975,4,6), 1)):
- 
         for name,method in siList:
             self.list.append(summaryInstance(name,method))
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
@@ -59,11 +54,11 @@ class simple_model(QtCore.QAbstractListModel):
 
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole: #show just the name
-            person = self.list[index.row()]
-            return QtCore.QVariant(person.name)
+            summaryInstance = self.list[index.row()]
+            return QtCore.QVariant(summaryInstance.name)
         elif role == QtCore.Qt.UserRole:  #return the whole python object
-            person = self.list[index.row()]
-            return person
+            summaryInstance = self.list[index.row()]
+            return summaryInstance
         return QtCore.QVariant()
 
     def removeRow(self, position):
@@ -100,8 +95,6 @@ class dropZone(QtGui.QListWidget):
     def dropEvent(self, event):
         #change the drop event 
         data = event.mimeData()
-        #print "data"
-        #print data
         bstream = data.retrieveData("application/x-summaryInstance",
             QtCore.QVariant.ByteArray)
         selected = pickle.loads(bstream.toByteArray())
@@ -120,6 +113,10 @@ class dropZone(QtGui.QListWidget):
     
     def getContents(self):
         return self.contentItems
+    
+    def clearDrops(self):
+        self.contentItems=[]
+        
 
 
 class draggableList(QtGui.QListView):
@@ -158,10 +155,6 @@ class draggableList(QtGui.QListView):
 
         pixmap = QtGui.QPixmap()
         pixmap = pixmap.grabWidget(self, self.rectForIndex(index))
-
-        # example 2 -  a plain pixmap
-        #pixmap = QtGui.QPixmap(100, self.height()/2)
-        #pixmap.fill(QtGui.QColor("orange"))
         drag.setPixmap(pixmap)
 
         drag.setHotSpot(QtCore.QPoint(pixmap.width()/2, pixmap.height()/2))
@@ -194,7 +187,7 @@ class linkSummaryDialog(QtGui.QDialog):
             Qt.Horizontal, self)
         
         self.buttons.accepted.connect(self.close)
-        self.buttons.rejected.connect(self.reject)
+        self.buttons.rejected.connect(self.rejectSelection)
         
         
 
@@ -211,6 +204,10 @@ class linkSummaryDialog(QtGui.QDialog):
     def getSummaryList(self):
         return self.dz.getContents()
         
+    
+    def rejectSelection(self):
+        self.dz.clearDrops() 
+        self.close()
     
     
     
