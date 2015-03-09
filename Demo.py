@@ -3,6 +3,7 @@ from PyQt4 import QtGui,QtCore
 from PyQt4.QtCore import Qt
 import sys
 
+#import serveral components 
 from inputDialog import * 
 from sqlTranslater import * 
 from annoDiag import * 
@@ -10,6 +11,9 @@ from clauseWidget import *
 from sqlParser import * 
 from annoButton import *
 from summaryAnnoButton import *
+from linkSummaryMethod import * 
+
+#for connectio with database 
 import psycopg2
 
 
@@ -190,7 +194,13 @@ class Example(QtGui.QMainWindow):
         sanQueryAction.setStatusTip('Query with annotation summary')
         sanQueryAction.triggered.connect(self.querySummaryMode)
         
-        #Discuss with boss--> zoom-in is context menu of annotation summarys 
+        #Link_in summary instance with current table 
+        linkAction=QtGui.QAction(QtGui.QIcon('./image/link.jpg'), 'SummaryQuery', self)
+        linkAction.setStatusTip('link summary methods to current table')
+        linkAction.triggered.connect(self.linkSummaryMethod)
+        
+        
+        
         
         
         self.toolBar.addAction(exitAction)
@@ -199,6 +209,7 @@ class Example(QtGui.QMainWindow):
         self.toolBar.addAction(queryAction)
         self.toolBar.addAction(anQueryAction)
         self.toolBar.addAction(sanQueryAction)
+        self.toolBar.addAction(linkAction)
         
         #return toolbar
 
@@ -489,7 +500,19 @@ class Example(QtGui.QMainWindow):
         self.executeQuery()
         
         
+    
+    
+    def linkSummaryMethod(self):
+        #link summary method to given table 
+        #GuI and real execution into different part 
         
+        lsDialog=linkSummaryDialog()
+        lsDialog.exec_()
+        siList=lsDialog.getSummaryList()
+        
+        #debugging 
+        for item in siList:
+            print str(item)
         
             
         
