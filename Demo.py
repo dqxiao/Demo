@@ -172,8 +172,8 @@ class Example(QtGui.QMainWindow):
         conDBAction.triggered.connect(self.connectDBlog)
         
         
-        queryAction=QtGui.QAction(QtGui.QIcon('./image/standardQuery.jpg'), 'Query', self)
-        queryAction.setStatusTip('Setting query mode as Standard')
+        queryAction=QtGui.QAction(QtGui.QIcon('./image/standardQuery.jpg'), 'StandardQuery', self)
+        queryAction.setStatusTip('standardQuery')
         queryAction.triggered.connect(self.queryMode)
         
         
@@ -195,7 +195,7 @@ class Example(QtGui.QMainWindow):
         sanQueryAction.triggered.connect(self.querySummaryMode)
         
         #Link_in summary instance with current table 
-        linkAction=QtGui.QAction(QtGui.QIcon('./image/link.jpg'), 'SummaryQuery', self)
+        linkAction=QtGui.QAction(QtGui.QIcon('./image/link.jpg'), 'linkSummaryMethod', self)
         linkAction.setStatusTip('link summary methods to current table')
         linkAction.triggered.connect(self.linkSummaryMethod)
         
@@ -213,9 +213,15 @@ class Example(QtGui.QMainWindow):
         
         #return toolbar
 
+    def styleWidget(self):
+        self.setStyleSheet("background-color:white;");
+
+
     def initUI(self):   
         #self size 
         self.resize(800,1024)
+        #self.setColor()
+        self.styleWidget()
         
         self.initToolBar()
         self.initCentralWidget()
