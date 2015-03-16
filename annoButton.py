@@ -38,16 +38,31 @@ class AnnoViewer(QtGui.QDialog):
         self.setWindowTitle("Info about all annotation.")
         proAnnos=ProAnnos(content)
         
+        scrollArea=QtGui.QScrollArea();
+        listModel=QtGui.QStandardItemModel();
+
+
         for anno in proAnnos.annos:
             s=anno.labelPre()
-            label=QtGui.QLabel(s)
-            layout.addWidget(label)
+            item=QtGui.QStandardItem(s)
+            listModel.appendRow(item)
+
+
+        #scrollArea.setModel(listModel)
+            #label=QtGui.QLabel(s)
+        view=QtGui.QListView()
+        view.setModel(listModel)
+
+        scrollArea.setWidget(view)
+        scrollArea.setWidgetResizable(True)
+        #
+        layout.addWidget(scrollArea)
         
         self.setLayout(layout)
         
-        self.resize(400,600)
+        self.resize(400,400)
             
-            
+        
         
     
         
