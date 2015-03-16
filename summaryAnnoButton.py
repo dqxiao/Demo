@@ -1,9 +1,12 @@
 import PyQt4 
 from PyQt4 import QtGui, QtCore
 from summaryResultParser import * 
-#from annoButton import * 
-#
 
+
+
+
+# summaryAnnoButton-> summaryView
+#
 class SummaryAnnoButton(QtGui.QWidget):
     
     def __init__(self,inputStr):
@@ -17,8 +20,8 @@ class SummaryAnnoButton(QtGui.QWidget):
     
     def handleButton(self):
         
-        print "deal with Summary Button"
-        print "whose inputStr:%{}".format(self.content)
+        #print "deal with Summary Button"
+        #print "whose inputStr:%{}".format(self.content)
         
         summaryView=SummaryViewer()
         summaryView.initUI(self.content)
@@ -33,10 +36,27 @@ class ListAnnosViewer(QtGui.QDialog):
     def initUI(self,annos):
         layout=QtGui.QVBoxLayout(self)
         self.setWindowTitle("Info about all annotation.")
+
+        scrollArea=QtGui.QScrollArea();
+        listModel=QtGui.QStandardItemModel();
+
+
+
         for anno in annos:
             s=anno.labelPre()
-            label=QtGui.QLabel(s)
-            layout.addWidget(label)
+            item=QtGui.QStandardItem(s)
+            listModel.appendRow(item)
+
+
+        #scrollArea.setModel(listModel)
+            #label=QtGui.QLabel(s)
+        view=QtGui.QListView()
+        view.setModel(listModel)
+
+        scrollArea.setWidget(view)
+        scrollArea.setWidgetResizable(True)
+        #
+        layout.addWidget(scrollArea)
         
         self.setLayout(layout)
         
