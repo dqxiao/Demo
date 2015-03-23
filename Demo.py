@@ -11,7 +11,9 @@ from clauseWidget import *
 from sqlParser import * 
 from annoButton import *
 from summaryAnnoButton import *
-from linkSummaryMethod import * 
+#from linkSummaryMethod import *  // switch to differnt version 
+from combCheckBox import * 
+from basicConfig import * 
 
 #for connectio with database 
 import psycopg2
@@ -22,8 +24,7 @@ class Example(QtGui.QMainWindow):
     
     def __init__(self):
         super(Example, self).__init__()
-        self.desc={}
-        self.initDesc()
+        self.table_name="bird"
         self.initUI()
         self.connection=[]
         self.clauseWidgets=[]
@@ -31,10 +32,10 @@ class Example(QtGui.QMainWindow):
         
         
     
-    def initDesc(self):
-        self.desc["ID"]=["Int"]
-        self.desc["Content"]=["Text"]
-        self.desc["ops"]=[">",">=","=","!=","<","<="]
+    # def initDesc(self):
+    #     self.desc["ID"]=["Int"]
+    #     self.desc["Content"]=["Text"]
+    #     self.desc["ops"]=[">",">=","=","!=","<","<="]
         
         
     def conToString(self):
@@ -44,100 +45,64 @@ class Example(QtGui.QMainWindow):
     
     def initCentralWidget(self):
         
-        #self.centralWidget = QtGui.QWidget()
-        #tableArea:
+        #self.filterSection=QtGui.QWidget();
+        self.fsMainSplitter = QtGui.QSplitter(Qt.Horizontal)
+        
+        #button selection 
+        self.AddClauseButton = QtGui.QPushButton("Add")
+        self.FilterButton=QtGui.QPushButton("Filter")
+        self.AddClauseButton.clicked.connect(self.addClause)
+        self.FilterButton.clicked.connect(self.filterClause)
+    
+        btsplitter=QtGui.QSplitter(Qt.Vertical)
+        btsplitter.addWidget(self.AddClauseButton)
+        btsplitter.addWidget(self.FilterButton)
+
+        #
+        self.ClauseArea = QtGui.QScrollArea()
+        self.ClauseScroll = QtGui.QWidget()
+        self.ClauseArea.setWidget(self.ClauseScroll)
+        self.ClauseGrid = QtGui.QGridLayout(self.ClauseArea)
+
+        self.fsMainSplitter.addWidget(btsplitter)
+        self.fsMainSplitter.addWidget(self.ClauseArea)
+        self.fsMainSplitter.setStretchFactor(1,1)
+
+
+
+
+        self.sqlSplitter=QtGui.QSplitter(Qt.Horizontal)
+        self.sqlInput = QtGui.QLineEdit()
+        self.execButton = QtGui.QPushButton("Exe")
+        self.execButton.clicked.connect(self.executeSql)
+        self.sqlSplitter.addWidget(self.sqlInput)
+        self.sqlSplitter.addWidget(self.execButton)
+
+
+
+
+
+
+
+ 
+
+        #tablArea: tableWidget
         self.TableArea = QtGui.QScrollArea()
         self.TableArea.setWidgetResizable(True)
-       
-
-        #tableScroll
-        #self.TableScorll = QtGui.QWidget()
-        #self.TableScorll.setGeometry(QtCore.QRect(0, 0, 509, 299))
-
-        #tableWidget
         self.tableWidget = QtGui.QTableWidget()
         self.tableWidget.resizeColumnsToContents()
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
-        #self.tableWidget.setWidgetResizable(True)
- #
- #        #tablescroll->tableArea
         self.TableArea.setWidget(self.tableWidget)
+
         
-        
-        
-        
-        self.widget = QtGui.QWidget()
- # #        self.widget.setGeometry(QtCore.QRect(30, 10, 511, 131))
- #
- #
- #        #SQL section
-        self.SQLSection = QtGui.QVBoxLayout(self.widget)
-        self.SQLSection.setMargin(0)
- #
- #        #ClauseSection
-        self.ClauseSection = QtGui.QHBoxLayout()
-        self.ClauseArea = QtGui.QScrollArea(self.widget)
-        self.ClauseArea.setWidgetResizable(True)
- #
-        # ClauseScroll
-        self.ClauseScroll = QtGui.QWidget()
-        #self.ClauseScroll.setGeometry(QtCore.QRect(0, 0, 424, 72))
-
-         #AddClauseButton
-
-        self.ClauseLayout=QtGui.QVBoxLayout(self.widget)
-        self.AddClauseButton = QtGui.QPushButton("Add",self.widget)
-        self.FilterButton=QtGui.QPushButton("Filter",self.widget)
-
-        self.ClauseLayout.addWidget(self.AddClauseButton)
-        self.ClauseLayout.addWidget(self.FilterButton)
-
-        #add clause Buttoon trigger
-        self.AddClauseButton.clicked.connect(self.addClause)
-        self.FilterButton.clicked.connect(self.filterClause)
-
-
-
-        #ClauseScroll-> ClauseArea
-        self.ClauseArea.setWidget(self.ClauseScroll)
-
-        #ClauseArea,addClause-> ClauseSection
-        self.ClauseSection.addWidget(self.ClauseArea)
-        self.ClauseSection.addLayout(self.ClauseLayout)
-        self.ClauseGrid = QtGui.QGridLayout(self.ClauseArea)
-
-        #
-        self.RawSqlSection = QtGui.QHBoxLayout()
-        self.sqlInput = QtGui.QLineEdit(self.widget)
-        self.RawSqlSection.addWidget(self.sqlInput)
-        self.execButton = QtGui.QPushButton("exe",self.widget)
-        self.execButton.clicked.connect(self.executeSql)
-
-        self.RawSqlSection.addWidget(self.execButton)
-
-
-        #ClauseSection,RawSqlSection--> SQLSection
-        self.SQLSection.addLayout(self.ClauseSection)
-        self.SQLSection.addLayout(self.RawSqlSection)
-
-
-        #self.setCentralWidget(self.centralWidget)
-        
-       
-        
+    
+        #genearal setting middle object 
         splitter = QtGui.QSplitter()
-        splitter.addWidget(self.widget)
+        splitter.addWidget(self.fsMainSplitter)
+        splitter.addWidget(self.sqlSplitter)
         splitter.addWidget(self.TableArea)
         splitter.setOrientation(Qt.Vertical)
-        #self.centralWidget.setCentralWidget(splitter)
-        
- #
- #
-
- #
-        
-        
         self.setCentralWidget(splitter)
         
     
@@ -154,10 +119,13 @@ class Example(QtGui.QMainWindow):
         
 
     def initToolBar(self):
-        
+        #image processing 
         self.toolBar = QtGui.QToolBar()
-        #self.toolBar.setObjectName(_fromUtf8("toolBar"))
-        self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.toolBar.setFixedSize(50, 800)
+      
+        self.toolBar.setOrientation(Qt.Vertical)
+        #
+        self.addToolBar(Qt.LeftToolBarArea,self.toolBar)
         
         
         exitAction = QtGui.QAction(QtGui.QIcon('./image/exit.png'), 'Exit', self)
@@ -166,26 +134,26 @@ class Example(QtGui.QMainWindow):
         exitAction.triggered.connect(self.close)
 
 
-        conDBAction=QtGui.QAction(QtGui.QIcon('./image/connect_database-icon.gif'), 'Connect', self)
+        conDBAction=QtGui.QAction(QtGui.QIcon('./image/connectDB.png'), 'Connect to local DataBase', self)
         conDBAction.setShortcut('Command+D')
         conDBAction.setStatusTip('Connect to DataBase')
         conDBAction.triggered.connect(self.connectDBlog)
         
         
-        queryAction=QtGui.QAction(QtGui.QIcon('./image/standardQuery.jpg'), 'StandardQuery', self)
+        queryAction=QtGui.QAction(QtGui.QIcon('./image/standardQuery.png'), 'StandardQuery', self)
         queryAction.setStatusTip('standardQuery')
         queryAction.triggered.connect(self.queryMode)
         
         
         
         #add annotation Icon 
-        self.addAnnoAction=QtGui.QAction(QtGui.QIcon('./image/addAnnotation.tiff'), 'Add Annotation', self)
+        self.addAnnoAction=QtGui.QAction(QtGui.QIcon('./image/addAnnotation.png'), 'Add Annotation', self)
         self.addAnnoAction.setStatusTip('Add annotation to Select Row')
         self.addAnnoAction.triggered.connect(self.addAnnotation)
         
         
         #standard Propagation
-        anQueryAction=QtGui.QAction(QtGui.QIcon('./image/annotationPropagation.jpg'), 'AnnoQuery', self)
+        anQueryAction=QtGui.QAction(QtGui.QIcon('./image/annotationPropagation.png'), 'AnnoQuery', self)
         anQueryAction.setStatusTip('Query with annotation')
         anQueryAction.triggered.connect(self.queryAnnoMode)
         
@@ -195,7 +163,7 @@ class Example(QtGui.QMainWindow):
         sanQueryAction.triggered.connect(self.querySummaryMode)
         
         #Link_in summary instance with current table 
-        linkAction=QtGui.QAction(QtGui.QIcon('./image/link.jpg'), 'linkSummaryMethod', self)
+        linkAction=QtGui.QAction(QtGui.QIcon('./image/link.png'), 'linkSummaryMethod', self)
         linkAction.setStatusTip('link summary methods to current table')
         linkAction.triggered.connect(self.linkSummaryMethod)
         
@@ -203,30 +171,37 @@ class Example(QtGui.QMainWindow):
         
         
         
-        self.toolBar.addAction(exitAction)
+        
         self.toolBar.addAction(conDBAction)
         self.toolBar.addAction(self.addAnnoAction)
         self.toolBar.addAction(queryAction)
         self.toolBar.addAction(anQueryAction)
         self.toolBar.addAction(sanQueryAction)
         self.toolBar.addAction(linkAction)
+
+        self.toolBar.addAction(exitAction)
         
         #return toolbar
 
     def styleWidget(self):
-        self.setStyleSheet("background-color:white;");
+        #self.setStyleSheet("background-color:white;");
+        with open("./stypleSheet/demoRed.css",'r') as f:
+            tema=f.read()
+
+        #print "loading stypleSheet"
+        #print tema
+        self.setStyleSheet(tema)
 
 
     def initUI(self):   
         #self size 
         self.resize(800,1024)
-        #self.setColor()
-        self.styleWidget()
         
+
         self.initToolBar()
         self.initCentralWidget()
-        
-        #self.initClauseWidget()
+        self.styleWidget()
+
         self.show()
     
     
@@ -262,7 +237,7 @@ class Example(QtGui.QMainWindow):
         setPModeQuery+=");"
         
         self.cur.execute(str(setPModeQuery))
-        print "exe:",setPModeQuery
+        #print "exe:",setPModeQuery
         
         self.conn.commit()
         
@@ -362,7 +337,7 @@ class Example(QtGui.QMainWindow):
         self.tableWidget.setRowCount(rowNum)
         self.tableWidget.setColumnCount(colNum)
        
-        print colnames
+        #print colnames
         
         m=0
         #set colnames
@@ -400,7 +375,7 @@ class Example(QtGui.QMainWindow):
         self.tableWidget.setRowCount(rowNum)
         self.tableWidget.setColumnCount(colNum)
        
-        print colnames
+        #print colnames
         
         m=0
         #set colnames
@@ -426,27 +401,15 @@ class Example(QtGui.QMainWindow):
             self.tableWidget.setCellWidget(n,i+1,newItem)
             n+=1
             
-            
-        
-        
-        
-        
-    
-                
-        
-            
-        
-        
-        
-        
     def executeQuery(self):
         self.setQueryMode()
-        print self.queryMode
+        #print self.queryMode
         try:
             self.cur.execute(self.sqlQuery)
         except psycopg2.ProgrammingError:
             self.conn.rollback()
             return
+
     
         rows=self.cur.fetchall()
         
@@ -473,7 +436,8 @@ class Example(QtGui.QMainWindow):
     def addClause(self):
         
         clauseWidget=ClauseWidget()
-        clauseWidget.setClause(self.desc)
+
+        clauseWidget.setClause(tableCols[self.table_name],operators)
         count=len(self.clauseWidgets)
         self.ClauseGrid.addWidget(clauseWidget,count,0)
         self.clauseWidgets.append(clauseWidget)
@@ -481,8 +445,7 @@ class Example(QtGui.QMainWindow):
     
     def filterClause(self):
         #default sql query  
-        sqlQuery="select * from test;"
-        #editing the number 
+        sqlQuery="select * from bird;"
         if(self.sqlQuery!=sqlQuery):
             sqlQuery=self.sqlQuery
         
@@ -503,33 +466,47 @@ class Example(QtGui.QMainWindow):
         
         query=sParser.formatSQL()
         self.sqlQuery=query
+        self.sqlInput.setText(query);
+
         self.executeQuery()
         
         
-    
-    
+    def getExistingSummaryInstance(self):
+        """
+        using sql query to get existing summary instance attached to given table
+        """
+        eSIS={}
+        qFormat="select summary_method from summary_catalog where table_name=\'{}\' ;"
+        for tn in tableList:
+            query=qFormat.format(tn)
+            self.cur.execute(query)
+            result=self.cur.fetchall()
+
+            eSIS[tn]=[row[0] for row in result]
+
+
+        #print eSIS
+
+        return eSIS
+
     def linkSummaryMethod(self):
         #link summary method to given table 
         #GuI and real execution into different part 
         
-        lsDialog=linkSummaryDialog()
+        eSIS=self.getExistingSummaryInstance()
+
+        #print eSIS
+
+        lsDialog=linkSummaryDialog(existSumInstance=eSIS)
         lsDialog.exec_()
         siList=lsDialog.getSummaryList()
-        
-        #debugging 
-        for item in siList:
-            print str(item)
-        
-            
-        
-        
-        
-        
-               
-        
+
+
 def main():
     
     app = QtGui.QApplication(sys.argv)
+    #set application setstyle 
+    app.setStyle("plastique") 
     ex = Example()
     sys.exit(app.exec_())
 

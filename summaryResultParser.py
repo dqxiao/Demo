@@ -11,7 +11,6 @@ class AnnoWithSummary:
         
         inputSplits=inputStr.split("--")
         #inputparsers=[item.split(":") for item in inputSplits]
-        
         for item in inputSplits:
             inputParsers=item.split(":")
             attr=inputParsers[0]
@@ -101,6 +100,7 @@ class SummaryInstance:
     def configPresentation(self):
         result=""
         for attr in self.config:
+
             result+=str(attr)+":"
             result+=self.config[attr]
             result+="\n"

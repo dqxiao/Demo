@@ -6,7 +6,7 @@ class SQLParser:
     
     def __init__(self,rawQuery):
         self.rawQuery=rawQuery.rstrip(";")
-        self.parsed=sqlparse.parse(rawQuery)
+        self.parsed=sqlparse.parse(self.rawQuery)
         self.bWhere=None
         self.whereClause=None
         self.aWhere=None
@@ -66,7 +66,7 @@ class SQLParser:
     def insertWhereClause(self,whereClauseList):
         if len(whereClauseList)==0:
             return 
-             
+        
         addWhere=" and ".join(whereClauseList)
         # if self.whereClause==None:
    #          self.whereClause=addWhere
@@ -74,7 +74,9 @@ class SQLParser:
    #          self.whereClause+=" and "
    #          self.whereClause+=addWhere
         
-        self.whereClause=addWhere
+        #self.whereClause=addWhere
+        if self.whereClause!=None:
+            self.whereClause+=" and "+addWhere
     
     def formatSQL(self):
         result=""
@@ -94,15 +96,16 @@ class SQLParser:
 if __name__=="__main__":
     #three simple test case 
     #query="select * from test";
-    #query="select * from test where id=1"
-    query="select * from test order by id"
+    query="select * from test where id=1"
+    query="select * from bird where id<4"; 
+
     sParser=SQLParser(query)
     sParser.extract_where_part()
     #sParser.debug()
-    sParser.insertWhereClause(["content='me","id<=2"])
+    sParser.insertWhereClause(["id<=2"])
     
     print sParser.formatSQL()
-    #sParser.debug()
+    # #sParser.debug()
         
         
         

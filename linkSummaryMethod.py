@@ -31,7 +31,6 @@ class summaryInstance(object):
     '''
     a custom data structure, for storing summary instance
     '''
-    
     def __init__(self,name,method):
         
         self.name=name

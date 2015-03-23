@@ -1,7 +1,6 @@
 import PyQt4
 from PyQt4 import QtCore, QtGui
 
-
 class ClauseWidget(QtGui.QWidget):
     
     def __init__(self):
@@ -32,23 +31,23 @@ class ClauseWidget(QtGui.QWidget):
         
         horizontalLayout.addWidget(fieldLabel)
         horizontalLayout.addWidget(self.fieldInput)
-        
+
         horizontalLayout.addWidget(opLabel)
         horizontalLayout.addWidget(self.opInput)
-        
+
         horizontalLayout.addWidget(valueLabel)
         horizontalLayout.addWidget(self.valueInput)
-        
+
         self.setLayout(horizontalLayout)
-        
-    def setClause(self,desc):
-        for key in desc:
+    
+    def setClause(self,cols,ops):
+        for key in cols:
             self.fieldInput.addItem(key)
         
-        for op in desc["ops"]:
+        for op in ops:
             self.opInput.addItem(op)
         
-    
+        #// 
     def getClause(self):
         
         #check it is available 
@@ -64,6 +63,8 @@ class ClauseWidget(QtGui.QWidget):
         else:
             #valid 
             return whereFormat.format(attribute,op,value)
+
+
         
     
     
