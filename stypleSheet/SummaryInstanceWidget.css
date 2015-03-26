@@ -1,0 +1,29 @@
+QWidget
+{
+    color: silver;
+    background-color: #302F2F;
+    selection-background-color:#78879b;
+    selection-color: black;
+    background-clip: border;
+    border-image: none;
+    outline: 0;
+}
+
+QLabel#ExtendedLabel{
+	border: 1px solid silver;
+    background-color: #302F2F;
+    border-radius: 3px;
+    color: white;
+    padding: 1px;
+    opacity: 20;
+    min-height: 20px;
+    max-height: 40px;
+    spacing: 2px;
+}
+
+QLabel#ExtendedLabel:pressed{
+	/*background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #78879b, stop: 1 #78879b);*/	
+	color: red;
+}
+
