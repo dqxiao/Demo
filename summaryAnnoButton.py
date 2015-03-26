@@ -6,7 +6,6 @@ from summaryResultParser import *
 
 
 # summaryAnnoButton-> summaryView
-#
 class SummaryAnnoButton(QtGui.QWidget):
     
     def __init__(self,inputStr):
@@ -106,13 +105,17 @@ class SummaryInstanceWidget(QtGui.QWidget):
         
         for sr in si.getResults():
             preLabel=ExtendedLabel(self)
+            preLabel.setObjectName("ExtendedLabel")
             preLabel.setSummaryResult(sr)
             self.connect(preLabel,QtCore.SIGNAL('clicked()'), preLabel.clicked)
             hLayout.addWidget(preLabel)
         
+
         layout.addWidget(label)
         layout.addLayout(hLayout)
-        #layout.addWidget(preLabel)
+        
+        
+    
     
     def clicked(self):
         print "click this poor guy"
@@ -130,7 +133,7 @@ class SummaryViewer(QtGui.QDialog):
         #ok    
     
     def initUI(self,content):
-        print "initUI"
+        #print "initUI"
         layout=QtGui.QVBoxLayout(self)
         self.setWindowTitle("Summary about annotation")
         sumAnnos=SummaryAnnos(content)
@@ -140,5 +143,25 @@ class SummaryViewer(QtGui.QDialog):
             siw=SummaryInstanceWidget(si)
             layout.addWidget(siw)
         self.setLayout(layout)
-        
+        self.styleWidget()
         self.resize(400,600)
+
+    def styleWidget(self):
+        with open("./stypleSheet/SummaryInstanceWidget.css",'r') as f:
+            tema=f.read()
+
+        #print "loading stypleSheet"
+        #print tema
+        self.setStyleSheet(tema)
+
+
+
+
+
+
+
+
+
+
+
+

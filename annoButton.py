@@ -15,8 +15,8 @@ class AnnoButton(QtGui.QWidget):
     
     def handleButton(self):
         
-        print "deal with Button"
-        print "whose inputStr:%{}".format(self.content)
+        #print "deal with Button"
+        #print "whose inputStr:%{}".format(self.content)
         
         annoView=AnnoViewer()
         annoView.initUI(self.content)
@@ -33,9 +33,9 @@ class AnnoViewer(QtGui.QDialog):
         #ok    
     
     def initUI(self,content):
-        print "initUI"
+        #print "initUI"
         layout=QtGui.QVBoxLayout(self)
-        self.setWindowTitle("Info about all annotation.")
+        self.setWindowTitle("Info about all annotations")
         proAnnos=ProAnnos(content)
         
         scrollArea=QtGui.QScrollArea();
@@ -46,10 +46,7 @@ class AnnoViewer(QtGui.QDialog):
             s=anno.labelPre()
             item=QtGui.QStandardItem(s)
             listModel.appendRow(item)
-
-
-        #scrollArea.setModel(listModel)
-            #label=QtGui.QLabel(s)
+        #what can i do for styling ListView
         view=QtGui.QListView()
         view.setModel(listModel)
 

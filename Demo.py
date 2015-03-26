@@ -1,4 +1,3 @@
-import PyQt4
 from PyQt4 import QtGui,QtCore
 from PyQt4.QtCore import Qt
 import sys
@@ -14,6 +13,7 @@ from summaryAnnoButton import *
 #from linkSummaryMethod import *  // switch to differnt version 
 from combCheckBox import * 
 from basicConfig import * 
+from summaryLinkManager import * 
 
 #for connectio with database 
 import psycopg2
@@ -128,43 +128,43 @@ class Example(QtGui.QMainWindow):
         self.addToolBar(Qt.LeftToolBarArea,self.toolBar)
         
         
-        exitAction = QtGui.QAction(QtGui.QIcon('./image/exit.png'), 'Exit', self)
+        exitAction = QtGui.QAction(QtGui.QIcon('./image/exit.png'), ' Exit ', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
 
 
-        conDBAction=QtGui.QAction(QtGui.QIcon('./image/connectDB.png'), 'Connect to local DataBase', self)
+        conDBAction=QtGui.QAction(QtGui.QIcon('./image/connectDB.png'), 'Connect with DataBase', self)
         conDBAction.setShortcut('Command+D')
         conDBAction.setStatusTip('Connect to DataBase')
         conDBAction.triggered.connect(self.connectDBlog)
         
         
-        queryAction=QtGui.QAction(QtGui.QIcon('./image/standardQuery.png'), 'StandardQuery', self)
+        queryAction=QtGui.QAction(QtGui.QIcon('./image/standardQuery.png'), 'SQL Query about Data', self)
         queryAction.setStatusTip('standardQuery')
         queryAction.triggered.connect(self.queryMode)
         
         
         
         #add annotation Icon 
-        self.addAnnoAction=QtGui.QAction(QtGui.QIcon('./image/addAnnotation.png'), 'Add Annotation', self)
-        self.addAnnoAction.setStatusTip('Add annotation to Select Row')
+        self.addAnnoAction=QtGui.QAction(QtGui.QIcon('./image/addAnnotation.png'), 'Attach Annotation to Selected Tuples', self)
+        self.addAnnoAction.setStatusTip('Attach Annotation to Selected Tuples')
         self.addAnnoAction.triggered.connect(self.addAnnotation)
         
         
         #standard Propagation
-        anQueryAction=QtGui.QAction(QtGui.QIcon('./image/annotationPropagation.png'), 'AnnoQuery', self)
-        anQueryAction.setStatusTip('Query with annotation')
+        anQueryAction=QtGui.QAction(QtGui.QIcon('./image/annotationPropagation.png'), 'SQL Query about Data with Annotation', self)
+        anQueryAction.setStatusTip('SQL Query about Data with Annotation')
         anQueryAction.triggered.connect(self.queryAnnoMode)
         
         #summary_aware Propagation
-        sanQueryAction=QtGui.QAction(QtGui.QIcon('./image/summary.png'), 'SummaryQuery', self)
+        sanQueryAction=QtGui.QAction(QtGui.QIcon('./image/summary.png'), 'SQL Query about Data with Annotation Summary', self)
         sanQueryAction.setStatusTip('Query with annotation summary')
         sanQueryAction.triggered.connect(self.querySummaryMode)
         
         #Link_in summary instance with current table 
-        linkAction=QtGui.QAction(QtGui.QIcon('./image/link.png'), 'linkSummaryMethod', self)
-        linkAction.setStatusTip('link summary methods to current table')
+        linkAction=QtGui.QAction(QtGui.QIcon('./image/link.png'), 'Link Summary Methods to Given Tables', self)
+        linkAction.setStatusTip('Link Summary Methods to Given Tables')
         linkAction.triggered.connect(self.linkSummaryMethod)
         
         
@@ -400,10 +400,13 @@ class Example(QtGui.QMainWindow):
             newItem=SummaryAnnoButton(str(row[-1]))
             self.tableWidget.setCellWidget(n,i+1,newItem)
             n+=1
-            
-    def executeQuery(self):
+    
+    def executeInputQuery(self,query):
+
+        print "query:{}".format(query);
+        
         self.setQueryMode()
-        #print self.queryMode
+
         try:
             self.cur.execute(self.sqlQuery)
         except psycopg2.ProgrammingError:
@@ -415,7 +418,8 @@ class Example(QtGui.QMainWindow):
         
         # set sqlTrans
         self.sqlTrans=SQLTranslater()
-        self.sqlTrans.setTableName("test")
+        self.sqlTrans.setTableName(self.table_name)
+        #
         self.sqlTrans.setRows(rows)
         self.sqlTrans.setDescription(self.cur.description)
         
@@ -427,10 +431,14 @@ class Example(QtGui.QMainWindow):
         if(self.queryMode=="summary-aware"):
             self.showSummaryAnnoTable(rows)
         
+
+    def executeQuery(self):
+        self.executeInputQuery(self.sqlQuery) 
         
     def executeSql(self):
-        
+        #setting the filter 
         self.sqlQuery=str(self.sqlInput.text())
+        print 
         self.executeQuery()
         
     def addClause(self):
@@ -458,6 +466,10 @@ class Example(QtGui.QMainWindow):
             if(len(sClause)==0):
                 continue
             whereClauses.append(sClause)
+
+        self.clauseWidgets=[]
+
+
             
         #parse orignal sql query 
         sParser=SQLParser(sqlQuery)
@@ -465,10 +477,13 @@ class Example(QtGui.QMainWindow):
         sParser.insertWhereClause(whereClauses)
         
         query=sParser.formatSQL()
-        self.sqlQuery=query
+        #self.sqlQuery=query
+        #change the sql query 
         self.sqlInput.setText(query);
+        #self.executeInputQuery(query)
 
-        self.executeQuery()
+
+        #self.executeQuery()
         
         
     def getExistingSummaryInstance(self):
@@ -495,11 +510,48 @@ class Example(QtGui.QMainWindow):
         
         eSIS=self.getExistingSummaryInstance()
 
-        #print eSIS
 
         lsDialog=linkSummaryDialog(existSumInstance=eSIS)
         lsDialog.exec_()
         siList=lsDialog.getSummaryList()
+        tableName=lsDialog.getConfigTableName()
+
+        print "tableNmae:",tableName
+        print "original attached summary method:",eSIS[tableName]
+        print "attached summary methods:", siList
+
+        solution=SummaryLinkManager(tableName)
+
+        solution.setDefaultSummaryMethods(eSIS[tableName])
+        solution.setSummaryMethods(siList)
+
+        try:
+            resetQuery=solution.resetCatalogQuery()
+            setQuery=solution.setCatalog()
+            cutQuery=solution.cutResult()
+            insertQuery=solution.insertResult()
+
+
+            if(resetQuery!=None):
+                print resetQuery
+                self.cur.execute(resetQuery)
+            if(setQuery!=None):
+                print setQuery
+                self.cur.execute(setQuery)
+            if(cutQuery!=None):
+                print cutQuery
+                self.cur.execute(cutQuery)
+            if(insertQuery!=None):
+                print insertQuery
+                self.cur.execute(insertQuery)
+
+            self.conn.commit()
+        except psycopg2.ProgrammingError:
+            print "rool back"
+            self.conn.rollback()
+        
+
+
 
 
 def main():
