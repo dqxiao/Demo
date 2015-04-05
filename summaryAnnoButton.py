@@ -11,11 +11,21 @@ class SummaryAnnoButton(QtGui.QWidget):
     def __init__(self,inputStr):
         
         QtGui.QWidget.__init__(self)
-        self.content=inputStr
-        self.button=QtGui.QPushButton("..", self)
+        #self.content=inputStr
+        #self.button=QtGui.QPushButton("..", self)
+
+        self.sumAnnos=SummaryAnnos(inputStr)
+        annoNum=str(self.sumAnnos.getSize())
+        self.button=QtGui.QPushButton(annoNum, self) #this one should be recounstrut
         self.button.clicked.connect(self.handleButton)
-        layout=QtGui.QVBoxLayout(self)
+        self.annoLabel=QtGui.QPushButton()
+        self.annoLabel.setIcon(QtGui.QIcon('./image/anno.png'))
+        self.annoLabel.clicked.connect(self.handleButton)
+
+        layout=QtGui.QHBoxLayout(self)
+        layout.addWidget(self.annoLabel)
         layout.addWidget(self.button)
+
     
     def handleButton(self):
         
@@ -23,7 +33,7 @@ class SummaryAnnoButton(QtGui.QWidget):
         #print "whose inputStr:%{}".format(self.content)
         
         summaryView=SummaryViewer()
-        summaryView.initUI(self.content)
+        summaryView.initUI(self.sumAnnos)
         #annoView.show()
         summaryView.exec_()
 
@@ -132,11 +142,10 @@ class SummaryViewer(QtGui.QDialog):
         super(SummaryViewer,self).__init__() 
         #ok    
     
-    def initUI(self,content):
+    def initUI(self,sumAnnos):
         #print "initUI"
         layout=QtGui.QVBoxLayout(self)
         self.setWindowTitle("Summary about annotation")
-        sumAnnos=SummaryAnnos(content)
         siList=sumAnnos.summaryList()
         
         for si in siList:

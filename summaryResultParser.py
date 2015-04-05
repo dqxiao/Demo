@@ -1,3 +1,6 @@
+import time 
+import string 
+
 class AnnoWithSummary:
     
     def __init__(self,inputStr):
@@ -10,7 +13,6 @@ class AnnoWithSummary:
     def parse(self,inputStr):
         
         inputSplits=inputStr.split("--")
-        #inputparsers=[item.split(":") for item in inputSplits]
         for item in inputSplits:
             inputParsers=item.split(":")
             attr=inputParsers[0]
@@ -26,16 +28,27 @@ class AnnoWithSummary:
         
         return [self.presentation[item] for item in self.description()]
         
-        
+    
+    def atrrPresentation(self,attrName):
+
+        attrValue=self.presentation[attrName]
+
+        if attrName=="author":
+            attrName="author ID"
+        # if attrName=="timestamp":
+        #     attrValue=time.strftime('%d-%m-%Y', time.localtime(int(attrValue)))
+
+        attrName=string.capwords(attrName)
+        return "{}:{}".format(attrName,attrValue)
+
+
     def labelPre(self):
         
-        result=""
+        attrPre=[]
         for attr in self.description():
-            result+=str(attr)+":"
-            result+=self.presentation[attr]
-            result+="\n"
-        
-        return result
+           attrPre.append(self.atrrPresentation(attr))
+                
+        return "\n".join(attrPre)
     
     
     def resParse(self):
@@ -173,6 +186,9 @@ class SummaryAnnos:
         # for si in siList:
 #             si.debugPresentation()
         return siList
+
+    def getSize(self):
+        return len(self.annos)
         
         
         

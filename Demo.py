@@ -49,7 +49,7 @@ class Example(QtGui.QMainWindow):
         self.fsMainSplitter = QtGui.QSplitter(Qt.Horizontal)
         
         #button selection 
-        self.AddClauseButton = QtGui.QPushButton("Add")
+        self.AddClauseButton = QtGui.QPushButton("+")
         self.FilterButton=QtGui.QPushButton("Filter")
         self.AddClauseButton.clicked.connect(self.addClause)
         self.FilterButton.clicked.connect(self.filterClause)
@@ -194,9 +194,8 @@ class Example(QtGui.QMainWindow):
 
 
     def initUI(self):   
-        #self size 
         self.resize(800,1024)
-        
+        self.setWindowTitle("InsightNoteGate Demostration")
 
         self.initToolBar()
         self.initCentralWidget()
@@ -340,7 +339,7 @@ class Example(QtGui.QMainWindow):
         #print colnames
         
         m=0
-        #set colnames
+        # [,tuple_id,td_sr]
         for c in colnames[:-2]:
             newitem=QtGui.QTableWidgetItem(c)
             self.tableWidget.setHorizontalHeaderItem(m,newitem)
@@ -358,6 +357,7 @@ class Example(QtGui.QMainWindow):
                 self.tableWidget.setItem(n,i,newitem)
             
             #here show annotation annoButton
+            #annos=ProAnnos(str(row[-1])).annos
             newItem=AnnoButton(str(row[-1]))
             self.tableWidget.setCellWidget(n,i+1,newItem)
             n+=1
@@ -384,7 +384,7 @@ class Example(QtGui.QMainWindow):
             self.tableWidget.setHorizontalHeaderItem(m,newitem)
             m+=1
         #
-        anSummaryCol=QtGui.QTableWidgetItem("AnnoSummary")
+        anSummaryCol=QtGui.QTableWidgetItem("Annotation Summary")
         self.tableWidget.setHorizontalHeaderItem(m,anSummaryCol)
         
         
@@ -394,16 +394,14 @@ class Example(QtGui.QMainWindow):
                 newitem=QtGui.QTableWidgetItem(str(row[i]))
                 newitem.setFlags( QtCore.Qt.ItemIsSelectable| QtCore.Qt.ItemIsEnabled)
                 self.tableWidget.setItem(n,i,newitem)
-            
-            
-            
+                
             newItem=SummaryAnnoButton(str(row[-1]))
             self.tableWidget.setCellWidget(n,i+1,newItem)
             n+=1
     
     def executeInputQuery(self,query):
 
-        print "query:{}".format(query);
+        print "Exect Input query:{}".format(query);
         
         self.setQueryMode()
 
@@ -490,14 +488,24 @@ class Example(QtGui.QMainWindow):
         """
         using sql query to get existing summary instance attached to given table
         """
+        #here we need reset PMode
+        self.queryMode="standard"
+        self.setQueryMode()
+        #here set model
         eSIS={}
         qFormat="select summary_method from summary_catalog where table_name=\'{}\' ;"
         for tn in tableList:
             query=qFormat.format(tn)
-            self.cur.execute(query)
-            result=self.cur.fetchall()
+            try:
+                self.cur.execute(query)
+                result=self.cur.fetchall()
+                eSIS[tn]=[row[0] for row in result]
 
-            eSIS[tn]=[row[0] for row in result]
+            except:
+                print "get summary Instnace error"
+                print query
+                self.conn.rollback()
+
 
 
         #print eSIS
@@ -535,19 +543,23 @@ class Example(QtGui.QMainWindow):
             if(resetQuery!=None):
                 print resetQuery
                 self.cur.execute(resetQuery)
+                self.conn.commit()
             if(setQuery!=None):
                 print setQuery
                 self.cur.execute(setQuery)
+                self.conn.commit()
             if(cutQuery!=None):
                 print cutQuery
                 self.cur.execute(cutQuery)
+                self.conn.commit()
             if(insertQuery!=None):
                 print insertQuery
                 self.cur.execute(insertQuery)
+                self.conn.commit()
 
-            self.conn.commit()
+            #self.conn.commit()
         except psycopg2.ProgrammingError:
-            print "rool back"
+            #print "rool back"
             self.conn.rollback()
         
 
