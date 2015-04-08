@@ -49,8 +49,11 @@ class Example(QtGui.QMainWindow):
         self.fsMainSplitter = QtGui.QSplitter(Qt.Horizontal)
         
         #button selection 
-        self.AddClauseButton = QtGui.QPushButton("+")
-        self.FilterButton=QtGui.QPushButton("Filter")
+        self.AddClauseButton = QtGui.QPushButton()
+        self.AddClauseButton.setIcon(QtGui.QIcon('./image/add.png'))
+        self.FilterButton=QtGui.QPushButton()
+        self.FilterButton.setIcon(QtGui.QIcon('./image/filter.png'))
+        #signal connecting
         self.AddClauseButton.clicked.connect(self.addClause)
         self.FilterButton.clicked.connect(self.filterClause)
     
@@ -73,7 +76,9 @@ class Example(QtGui.QMainWindow):
 
         self.sqlSplitter=QtGui.QSplitter(Qt.Horizontal)
         self.sqlInput = QtGui.QLineEdit()
-        self.execButton = QtGui.QPushButton("Exe")
+        self.execButton = QtGui.QPushButton()
+        self.execButton.setIcon(QtGui.QIcon('./image/exec.png'))
+
         self.execButton.clicked.connect(self.executeSql)
         self.sqlSplitter.addWidget(self.sqlInput)
         self.sqlSplitter.addWidget(self.execButton)

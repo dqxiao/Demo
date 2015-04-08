@@ -1,5 +1,6 @@
 import PyQt4 
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import Qt
 from summaryResultParser import * 
 
 
@@ -64,12 +65,9 @@ class ListAnnosViewer(QtGui.QDialog):
 
         scrollArea.setWidget(view)
         scrollArea.setWidgetResizable(True)
-        #
         layout.addWidget(scrollArea)
-        
         self.setLayout(layout)
-        
-        self.resize(200,300)
+        self.resize(400,600)
     
     
 
@@ -102,17 +100,20 @@ class ExtendedLabel(QtGui.QLabel):
 
 class SummaryInstanceWidget(QtGui.QWidget):
     
-    def __init__(self,si):
+    def __init__(self,parent):
+        QtGui.QWidget.__init__(self,parent)
+
+
+    def initUI(self,si):
+
         #input is one si 
         QtGui.QWidget.__init__(self)
         layout=QtGui.QVBoxLayout(self)
+
+
         label=QtGui.QLabel(si.configPresentation())
         hLayout=QtGui.QHBoxLayout()
-        #preLabel=ExtendedLabel("clicked this one")
-        #preLabel.clicked.connect(clicked)
-        #self.connect(preLabel,QtCore.SIGNAL('clicked()'), self.clicked())
-        
-        
+        #I wanto 
         for sr in si.getResults():
             preLabel=ExtendedLabel(self)
             preLabel.setObjectName("ExtendedLabel")
@@ -121,8 +122,10 @@ class SummaryInstanceWidget(QtGui.QWidget):
             hLayout.addWidget(preLabel)
         
 
-        layout.addWidget(label)
-        layout.addLayout(hLayout)
+        layout.setSpacing(0)
+        layout.setMargin(0)
+        layout.addWidget(label,0)
+        layout.addLayout(hLayout,0)
         
         
     
@@ -149,11 +152,12 @@ class SummaryViewer(QtGui.QDialog):
         siList=sumAnnos.summaryList()
         
         for si in siList:
-            siw=SummaryInstanceWidget(si)
+            siw=SummaryInstanceWidget(self)
+            siw.initUI(si)
             layout.addWidget(siw)
         self.setLayout(layout)
         self.styleWidget()
-        self.resize(400,600)
+        self.resize(400,300)
 
     def styleWidget(self):
         with open("./stypleSheet/SummaryInstanceWidget.css",'r') as f:

@@ -77,7 +77,7 @@ class SummaryInstance:
     
     def __init__(self,instanceName):
         self.name=instanceName
-        self.configDesc=["Type","Invariant","Function"]
+        self.configDesc=["Type","Data Invariant","Function"]
         self.config={}
         self.result={}
     
@@ -119,11 +119,21 @@ class SummaryInstance:
             result+="\n"
         
         return result
+
+    def resultPre(self,key):
+
+        if key=="pos":
+            return ["positive",self.result[key]]
+        if key=="neg":
+            return ["negative",self.result[key]]
+
+        return [key,self.result[key]]
+
     
     def getResults(self):
         #return [[key,value] for key,value in self.result]
         
-        return [[key,self.result[key] ]for key in self.result]
+        return [ self.resultPre(key) for key in self.result]
     
     #
 
@@ -153,12 +163,12 @@ class SummaryAnnos:
     def instanceConfig(self):
         
         self.summaryConfig={}
-        self.summaryConfig["classifier_1"]=["classify","t","Naive Bayes"]
-        self.summaryConfig["classifier_2"]=["classify","t","SVM"]
-        self.summaryConfig["cluster_1"]=["cluster","f","KMEANS"]
-        self.summaryConfig["cluster_2"]=["cluster","f","Gaussian mixtures"]
-        self.summaryConfig["snippet_1"]=["snippet_1","t","LDA"]
-        self.summaryConfig["snippet_2"]=["snippet_2","t","Text Rank"]
+        self.summaryConfig["classifier_1"]=["classify","T","Naive Bayes"]
+        self.summaryConfig["classifier_2"]=["classify","T","SVM"]
+        self.summaryConfig["cluster_1"]=["cluster","T","KMEANS"]
+        self.summaryConfig["cluster_2"]=["cluster","T","Gaussian mixtures"]
+        self.summaryConfig["snippet_1"]=["snippet_1","T","LDA"]
+        self.summaryConfig["snippet_2"]=["snippet_2","T","Text Rank"]
         
         
     

@@ -1,4 +1,6 @@
 #standard propagation result parser 
+import string 
+
 class Annotation:
     
     def __init__(self,inputStr):
@@ -13,7 +15,7 @@ class Annotation:
         for item in inputSplits:
             inputParsers=item.split(":")
             attr=inputParsers[0]
-            val="".join(inputParsers[1:])
+            val=":".join(inputParsers[1:])
             
             self.presentation[attr]=val
     
@@ -25,18 +27,40 @@ class Annotation:
         
         return [self.presentation[item] for item in self.description()]
         
-        
+    
+    def atrrPresentation(self,attrName):
+
+        attrValue=self.presentation[attrName]
+
+        if attrName=="author":
+            attrName="author ID"
+        # if attrName=="timestamp":
+        #     attrValue=time.strftime('%d-%m-%Y', time.localtime(int(attrValue)))
+
+        attrName=string.capwords(attrName)
+        return "{}:{}".format(attrName,attrValue)
+
+
+
     def labelPre(self):
         
-        result=""
+        # result=""
+        # for attr in self.description():
+        #     if attr=="author":
+        #         result+="Author ID "
+        #     else:
+        #         result+=str(attr)+":"
+
+        #     result+=self.presentation[attr]
+        #     result+="\n"
+        
+        # return result
+        
+        attrPre=[]
         for attr in self.description():
-            result+=str(attr)+":"
-            result+=self.presentation[attr]
-            result+="\n"
-        
-        return result
-        
-        
+           attrPre.append(self.atrrPresentation(attr))
+                
+        return "\n".join(attrPre)
 
 
 class ProAnnos:
