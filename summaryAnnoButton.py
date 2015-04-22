@@ -16,11 +16,13 @@ class SummaryAnnoButton(QtGui.QWidget):
         #self.button=QtGui.QPushButton("..", self)
 
         self.sumAnnos=SummaryAnnos(inputStr)
-        annoNum=str(self.sumAnnos.getSize())
-        self.button=QtGui.QPushButton(annoNum, self) #this one should be recounstrut
+
+        #annoNum=str(self.sumAnnos.getSize())
+        siNum=str(len(self.sumAnnos.summaryList()))
+        self.button=QtGui.QPushButton(siNum, self) #this one should be recounstrut
         self.button.clicked.connect(self.handleButton)
         self.annoLabel=QtGui.QPushButton()
-        self.annoLabel.setIcon(QtGui.QIcon('./image/anno.png'))
+        self.annoLabel.setIcon(QtGui.QIcon('./image/summaryInstance.png'))
         self.annoLabel.clicked.connect(self.handleButton)
 
         layout=QtGui.QHBoxLayout(self)

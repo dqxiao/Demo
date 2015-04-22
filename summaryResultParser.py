@@ -77,7 +77,7 @@ class SummaryInstance:
     
     def __init__(self,instanceName):
         self.name=instanceName
-        self.configDesc=["Type","Data Invariant","Function"]
+        self.configDesc=["Type","Function","Data Invarient"]
         self.config={}
         self.result={}
     
@@ -112,8 +112,8 @@ class SummaryInstance:
     
     def configPresentation(self):
         result=""
-        for attr in self.config:
-
+        for attr in self.configDesc:
+            #print "debug attr:",attr
             result+=str(attr)+":"
             result+=self.config[attr]
             result+="\n"
@@ -163,12 +163,12 @@ class SummaryAnnos:
     def instanceConfig(self):
         
         self.summaryConfig={}
-        self.summaryConfig["classifier_1"]=["classify","T","Naive Bayes"]
-        self.summaryConfig["classifier_2"]=["classify","T","SVM"]
-        self.summaryConfig["cluster_1"]=["cluster","T","KMEANS"]
-        self.summaryConfig["cluster_2"]=["cluster","T","Gaussian mixtures"]
-        self.summaryConfig["snippet_1"]=["snippet_1","T","LDA"]
-        self.summaryConfig["snippet_2"]=["snippet_2","T","Text Rank"]
+        self.summaryConfig["classifier_1"]=["classify","Naive Bayes","T"]
+        self.summaryConfig["classifier_2"]=["classify","SVM","T"]
+        self.summaryConfig["cluster_1"]=["cluster","KMEANS","T"]
+        self.summaryConfig["cluster_2"]=["cluster","Gaussian mixtures","T"]
+        self.summaryConfig["snippet_1"]=["snippet_1","LDA","T"]
+        self.summaryConfig["snippet_2"]=["snippet_2","Text Rank","T"]
         
         
     
