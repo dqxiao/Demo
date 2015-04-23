@@ -1,0 +1,8 @@
+Section \ref{} gives the notations and brief introduction of Map-Reduce. 
+Section \ref{} describes in-memory algorithms, their distributed version with efficiency analysis. 
+Section \ref{} discuss our proposed partition-aware communication approach and incremental triangle listing. 
+Section \ref{} shows experiemental evaluation of our approach with triangle listing algorithm over serveral graph dataset and incremental one. 
+Section \ref {} concluses the paper. 
+Let $G(V,E)$ be a simple undirected graph where $V$ is the set of vertices and $E$is the set of edges. Let $n$ be $|V|$, $m$ be $|E|$.  
+We define the set of adjacent vertices of vertex $v$ as $\Gamma(v)$ , i.e. $\Gamma(v)=\lbrace w | (v,w) \in E \rbrace $. Let $d_v$ denotes the degree of vertex $v$, i.e. $d(v)=|\Gamma(v)|$. Linear degree nodes are nodes whose degree is approximate to the number of vertices in graph, i.e. $d_v=O(n)$. The maximum degree of a graph G, denoted by $d_{max}$, i.e. $d_{max}= max(\lbrace d_v | v \in V\rbrace)$. 
+A triangle in an undirected graph is a set of three vertices such that each possible edges between them is present in the graph. Let $\triangle_v$ denotes triangles associated with vertex $v$, i.e $\triangle(v)= \lbrace (u,w,v)| u,w \in \Gamma(v) \land u \succ w \land (u,w) \in E \rbrace $.

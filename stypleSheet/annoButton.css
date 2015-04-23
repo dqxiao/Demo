@@ -1,0 +1,4 @@
+QPushButton {
+	background-image: url("/Users/dongqingxiao/Documents/ResearchProject2014/DemoSIGMOD/image/anno.png");
+	/*background: QLinearGradient(x1:0,y1:0,x2:0,y2:1,stop:0 #fff, stop: 0.9 #123);*/
+}

@@ -1,0 +1,8 @@
+hadoop jar selfSkipTriangleCounting.jar selfSkipTriangleCounting.selfSkipTriangleCounting /publication/refSeries/1800-2010/ /publication/tlRef/1800-2010 24
+
+
+hadoop jar selfSkipTriangleCounting.jar selfSkipTriangleCounting.selfSkipTriangleCounting /publication/refSeries/1800-2011/ /publication/tlRef/1800-2011 24
+
+
+hadoop jar refUpdataGraph.jar refUpdataGraph.refUpdataGraph /publication/incSeries/1800-2010 /publication/adjSeries/2011-2011 /publication/refSeries/1800-2011/  24
+hadoop jar 
