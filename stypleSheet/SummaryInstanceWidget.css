@@ -30,8 +30,25 @@ QLabel#ExtendedLabel{
     spacing: 2px;
 }
 
+
+QLabel#RepLabel{
+    border: 1px solid silver;
+    background-color: #302F2F;
+    border-radius: 3px;
+    color: white;
+    padding: 1px;
+    opacity: 20;
+    min-height: 10px;
+    max-height: 20px;
+    spacing: 2px;
+}
+
 QLabel#ExtendedLabel::item:pressed{
 	color: red;
+}
+
+QLabel#RepLabel::item:pressed{
+    color: red;
 }
 
 

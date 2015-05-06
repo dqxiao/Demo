@@ -70,11 +70,11 @@ class ListAnnosViewer(QtGui.QDialog):
         layout.addWidget(scrollArea)
         self.setLayout(layout)
         self.resize(400,600)
-    
-    
 
 
-class ExtendedLabel(QtGui.QLabel):
+
+
+class RepLabel(QtGui.QLabel):
     def __init__(self,parent):
         QtGui.QLabel.__init__(self,parent)
     
@@ -84,6 +84,35 @@ class ExtendedLabel(QtGui.QLabel):
         self.annos=annos # a list of annotation 
         self.setText(self.presentation())
     
+    def presentation(self):
+        return "Rep:"
+    
+    def mouseReleaseEvent(self,ev):
+        self.emit(QtCore.SIGNAL('clicked()'))
+    
+    def clicked(self):
+        #print "click this poor guy"
+        annoView=ListAnnosViewer()
+        annoView.initUI([self.annos[0]])
+        annoView.exec_()
+
+
+class ExtendedLabel(QtGui.QLabel):
+    def __init__(self,parent):
+        QtGui.QLabel.__init__(self,parent)
+    
+    def setSummaryResult(self,sr,flag):
+        [result,annos]=sr
+        self.result=result
+        self.annos=annos # a list of annotation 
+        if not flag:
+            self.setText(self.presentation())
+        else:
+            self.setText(self.rawPresentation())
+
+    def rawPresentation(self):
+        return "{}".format(len(self.annos))
+        
     def presentation(self):
         return "{}:{}".format(self.result,len(self.annos))
     
@@ -115,13 +144,26 @@ class SummaryInstanceWidget(QtGui.QWidget):
 
         label=QtGui.QLabel(si.configPresentation())
         hLayout=QtGui.QHBoxLayout()
-        #I wanto 
+        #I wanto
+
+
         for sr in si.getResults():
+            flag=si.isCluster
+
+            if si.isCluster():
+                repLabel=RepLabel(self)
+                repLabel.setObjectName("RepLabel")
+                repLabel.setSummaryResult(sr)
+                self.connect(repLabel,QtCore.SIGNAL('clicked()'), repLabel.clicked)
+                hLayout.addWidget(repLabel)
             preLabel=ExtendedLabel(self)
             preLabel.setObjectName("ExtendedLabel")
-            preLabel.setSummaryResult(sr)
+            preLabel.setSummaryResult(sr,flag)
             self.connect(preLabel,QtCore.SIGNAL('clicked()'), preLabel.clicked)
             hLayout.addWidget(preLabel)
+
+            
+
         
 
         layout.setSpacing(0)

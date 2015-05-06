@@ -135,7 +135,9 @@ class SummaryInstance:
         
         return [ self.resultPre(key) for key in self.result]
     
-    #
+    def isCluster(self):
+
+        return self.config["Type"]=="cluster"
 
 
 class SummaryAnnos:

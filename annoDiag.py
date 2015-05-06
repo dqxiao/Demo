@@ -14,7 +14,9 @@ class AnnoDialog(QtGui.QDialog):
     def initUI(self):
         
         self.resize(400,300)
-        
+        self.setWindowTitle("Window: Adding Annotation")
+
+
         gridLayout=QtGui.QGridLayout()
         gridLayout.setMargin(0)
         
