@@ -34,6 +34,7 @@ class linkSummaryDialog(QtGui.QDialog):
         self.setWindowTitle("Select Summary Methods Attached to Chosed Table")
         self.resize(400,250)
         self.siList=[]
+        self.flag=False
         layout = QtGui.QGridLayout(self)
 
       
@@ -99,6 +100,7 @@ class linkSummaryDialog(QtGui.QDialog):
     
     def closeAndRecord(self):
       #need to calculation
+      self.flag=True
       self.siList=[]
       for i in range(self.model.rowCount()):
         item=self.model.item(i)
@@ -113,7 +115,7 @@ class linkSummaryDialog(QtGui.QDialog):
 
 
     def getSummaryList(self):
-        return self.siList   
+        return [self.flag,self.siList]  
     
     def rejectSelection(self):
         self.close()

@@ -526,7 +526,11 @@ class Example(QtGui.QMainWindow):
 
         lsDialog=linkSummaryDialog(existSumInstance=eSIS)
         lsDialog.exec_()
-        siList=lsDialog.getSummaryList()
+        [flag,siList]=lsDialog.getSummaryList()
+
+        if not flag:
+            return 
+
         tableName=lsDialog.getConfigTableName()
 
         print "tableNmae:",tableName
